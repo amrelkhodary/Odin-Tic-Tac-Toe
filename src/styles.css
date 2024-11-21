@@ -153,6 +153,10 @@ body, html {
     overflow-y: hidden; /* Prevents vertical overflow (optional) */
 }
 
+.hide {
+    display: none;
+}
+
 /* header styles*/
 .header {
     width: 100vw;
@@ -173,8 +177,79 @@ body, html {
 /* body styles */
 .body {
     flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 15%;
+    margin-right: 15%;
 }
 
+.body .tic-tac-toe-box {
+    height: 512px;
+    width: 512px;
+    display: flex;
+    flex-direction: column;
+}
+
+.body .tic-tac-toe-box .row {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+}
+
+.body .tic-tac-toe-box .row div:hover {
+    background-color: lightblue;
+    opacity: 50%;
+}
+
+.body .tic-tac-toe-box .row .first-row-one {
+    flex: 1;
+    border-right: 7px black solid;
+    border-bottom: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .first-row-two {
+    flex: 1;
+    border-right: 7px black solid;
+    border-bottom: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .first-row-three {
+    flex: 1;
+    border-bottom: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .second-row-one {
+    flex: 1;
+    border-right: 7px black solid;
+    border-bottom: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .second-row-two {
+    flex: 1;
+    border-right: 7px black solid;
+    border-bottom: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .second-row-three {
+    flex: 1;
+    border-bottom: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .third-row-one {
+    flex: 1;
+    border-right: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .third-row-two{
+    flex: 1;
+    border-right: 7px black solid;
+}
+
+.body .tic-tac-toe-box .row .third-row-three {
+    flex: 1;
+}
 /* footer styles*/
 .footer {
     height: 5vh;
