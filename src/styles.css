@@ -191,6 +191,9 @@ body, html {
     flex-direction: column;
 }
 
+.body .tic-tac-toe-box.hide {
+    display: none;
+}
 .body .tic-tac-toe-box .row {
     width: 100%;
     display: flex;
