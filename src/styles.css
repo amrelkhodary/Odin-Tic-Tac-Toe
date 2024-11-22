@@ -263,6 +263,10 @@ body, html {
     border: 2px solid black;
 }
 
+.body .start-game-form-box.hide {
+    display: none;
+}
+
 .body .start-game-form-box h1 {
     font-size: 36px;
     font-style: bold;
