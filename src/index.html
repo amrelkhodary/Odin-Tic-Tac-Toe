@@ -15,16 +15,18 @@
         <h1 class="header-title">Tic Tac Toe</h1>
     </div>
     <div class="body">
-        <div class="start-game-form">
+        <div class="start-game-form-box">
             <h1>Enter Players 1 and 2's Names</h1>
-            <form action="./index.html" method="POST">
+            <form action="./index.html" method="POST" class="start-game-form">
                 <label for="player-1-name-textbox">Player 1's Name</label>
                 <input type="text" id="player-1-name-textbox" name="player-1-name" placeholder="Enter Name">
     
                 <label for="player-2-name-textbox">Player 2's Name</label>
                 <input type="text" id="player-2-name-textbox" name="player-2-name" placeholder="Enter Name">
     
-                <button type="submit">Start Game!</button>
+                <div class="submit-button-container-div">
+                    <button type="submit">Start Game!</button>
+                </div>
             </form>
         </div>
         <div class="tic-tac-toe-box hide">
