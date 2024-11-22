@@ -314,6 +314,49 @@ body, html {
     color: black;
     border: 2px black solid;
 }
+
+.body .game-over-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 16px 32px;
+    background-color: white;
+    border: 2px solid black;
+}
+.body .game-over-box.hide {
+    display: none;
+}
+
+.body .game-over-box h1 {
+    font-size: 48px;
+    font-style: bold;
+    font-family: "Caveat Brush", cursive;
+    text-align: center;
+    margin-bottom: 16px;
+}
+
+.body .game-over-box .game-over-box-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    justify-content: center;
+    align-items: center;
+}
+
+.body .game-over-box .game-over-box-buttons button {
+    padding: 8px 16px;
+    background-color: black;
+    color: white;
+    font-family: "Caveat Brush", cursive;
+    font-size: 24px;
+}
+
+.body .game-over-box .game-over-box-buttons button:hover {
+    background-color: white;
+    color: black;
+    border: 2px black solid;
+}
+
 /* footer styles*/
 .footer {
     height: 5vh;
