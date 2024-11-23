@@ -60,14 +60,39 @@ function GameObject(firstPlayer, secondPlayer) {
         turn = (turn == TURN_PLAYER_ONE) ? TURN_PLAYER_TWO : TURN_PLAYER_ONE;
     }
 
-    return { firstPlayer, secondPlayer, status, turn, updateBoard };
+    const getPlayers = function() {
+        return {firstPlayer, secondPlayer};
+    }
+
+    const setPlayers = function(nFirstPlayer, nSecondPlayer) {
+        firstPlayer = nFirstPlayer;
+        secondPlayer = nSecondPlayer;
+    }
+
+    const getStatus = function() {
+        return status;
+    }
+
+    const getTurn = function() {
+        return turn;
+    }
+
+    const __debug_logall = function() {
+        console.log("FIRST PLAYER: " + firstPlayer + "\n");
+        console.log("SECOND PLAYER: " + secondPlayer + "\n");
+        console.log("BOARD: " + board + "\n");
+        console.log("STATUS: " + status + "\n");
+        console.log("TURN: " + turn + "\n");
+        console.log("\n");
+    }
+
+
+    return {getPlayers, setPlayers,getStatus, getTurn, updateBoard, __debug_logall};
 }
 
 function StartPage(elements /* should be passed as an object*/, pageId, context) {
     const ACTION_UPDATE_GAME_OBJECT_PLAYER_NAMES = 987;
     const ACTION_MOVE = 1857;
-
-    //TODO: clear HTML elements
 
     //TODO: setup event handlers
     elements.container.addEventListener("submit", function (event) {
@@ -86,7 +111,7 @@ function StartPage(elements /* should be passed as an object*/, pageId, context)
         //TODO: implement input validation here
 
         //TODO: request the controller to to move to the game page
-        console.log("START_PAGE: sent 2 requests to controller.\n");
+        console.log("START_PAGE: sent a request to change player names to requestHandler.\n");
         context.ctrlRequestHandlerInstance(pageId, ACTION_UPDATE_GAME_OBJECT_PLAYER_NAMES, {firstPlayer, secondPlayer});
         context.ctrlRequestHandlerInstance(pageId, ACTION_MOVE, {fromPageContainer: elements.container, toPageId: context.gamePageId});
         
@@ -95,20 +120,49 @@ function StartPage(elements /* should be passed as an object*/, pageId, context)
     return {container: elements.container};
 }
 
-function GamePage(elements /* should be passed as an object*/, pageId, ctrlRequestHandlerInstance) {
+function GamePage(elements /* should be passed as an object*/, pageId, context) {
+    const ACTION_UPDATE_BOARD = 2378;
+    let turn = 1;
+    //clear the Tic Tac Toe board
+    for(let i = 0; i<9; i++) {
+        elements.boxes[i].innerHTML = "";
+    }
 
-    //TODO: clear HTML elements
-    
-    //TODO: setup event handlers
+    const calculatePositionArr = function(index) {
+        return (index == 0) ? [0,0] : 
+               (index == 1) ? [0,1] :
+               (index == 2) ? [0,2] :
+               (index == 3) ? [1,0] :
+               (index == 4) ? [1,1] :
+               (index == 5) ? [1,2] :
+               (index == 6) ? [2,0] :
+               (index == 7) ? [2,1] :
+               (index == 8) ? [2,2] : [-1,-1];
+    }
+
+    //set up event handlers
+    for(let i = 0; i<9; i++) {
+        elements.boxes[i].addEventListener("click", function(event) {
+            if(elements.boxes[i].innerHTML == "") {
+                elements.boxes[i].innerHTML = (turn == 1) ? "X" : "O";
+                context.ctrlRequestHandlerInstance(pageId, ACTION_UPDATE_BOARD, {position: calculatePositionArr(i)})
+                turn = (turn == 1) ? 2 : 1;
+            }
+            
+        }) ;
+    }
     return {container: elements.container}
 }
 
-function GameOverPage(elements /* should be passed as an object*/, pageId, ctrlRequestHandlerInstance) {
-
-    //TODO: clear HTML elements
-
+function GameOverPage(elements /* should be passed as an object*/, pageId, context) {
+    const STATUS_PLAYER_ONE_WINS = 399;
+    const STATUS_TIE = 407;
+    elements.gameOverText.textContent = (context.status == STATUS_TIE) ? "It's a tie!" :
+                                        (context.status == STATUS_PLAYER_ONE_WINS) ? context.firstPlayer + " wins!" :
+                                        context.secondPlayer + " wins!"; 
+    
     //TODO: setup event handlers
-
+    return {container: elements.container};
 }
 
 function App() {
@@ -117,6 +171,11 @@ function App() {
     const TYPE_GAME_OVER_PAGE = "q*1uESapzs8";
     const ACTION_UPDATE_GAME_OBJECT_PLAYER_NAMES = 987;
     const ACTION_MOVE = 1857;
+    const ACTION_UPDATE_BOARD = 2378;
+    const STATUS_PLAYER_ONE_WINS = 399;
+    const STATUS_PLAYER_TWO_WINS = 401;
+    const STATUS_TIE = 407;
+    const STATUS_UNDECIDED = 500;
 
     let controller = {};
     let pages = {};
@@ -147,6 +206,7 @@ function App() {
 
         const gameOverPage = GameOverPage({
             container: document.querySelector(".game-over-box"),
+            gameOverText: document.querySelector(".game-over-box h1"),
             playAgainButton: document.querySelector(".play-again-button"),
             newGameButton: document.querySelector(".back-to-home-button")
         }, gameOverPageId, {ctrlRequestHandlerInstance: controller.requestHandler});
@@ -159,26 +219,20 @@ function App() {
     }
 
     controller.requestHandler = function(pageId, requestType, requestParams) {
-        console.log("REQUEST_HANDLER:\n");
-        console.log("REQUEST FROM: " + pageId + "\n");
-        console.log("REQUEST TYPE: " + requestType + "\n");
-        console.log("REQEST PARAMS: \n");
-        for(const param in requestParams) {
-            console.log(param + ": " + requestParams[param] + "\n");
-        }
-
         if(verifyId(pageId) == TYPE_START_PAGE) {
-            console.log("inside verify Id");
             if(requestType == ACTION_UPDATE_GAME_OBJECT_PLAYER_NAMES) {
+                console.log("REQUEST_HANDLER: recieved a request from start page to change player names\n");
                 controller.updateGamePlayerNames(requestParams.firstPlayer, requestParams.secondPlayer);
             }
             if(requestType == ACTION_MOVE && verifyId(requestParams.toPageId) == TYPE_GAME_PAGE) {
                 //TODO: Impement the page switching logic
-                controller.switchPage(requestParams.fromPageContainer, pages.gamePage.container);
+                controller.switchPage(requestParams.fromPageContainer, pages.gamePage.page.container);
             }
         }
         else if(verifyId(pageId) == TYPE_GAME_PAGE) {
-
+            if(requestType == ACTION_UPDATE_BOARD) {
+                controller.updateGameBoard(requestParams.position);
+            }
         }
         else if(verifyId(pageId) == TYPE_GAME_OVER_PAGE) {
 
@@ -186,26 +240,47 @@ function App() {
     }
 
     controller.updateGamePlayerNames = function(firstPlayer, secondPlayer) {
-        console.log("updateGamePlayerNames:\n");
-        console.log("first player: " + firstPlayer + ", second player: " + secondPlayer + "\n");
-        game.firstPlayer = firstPlayer; 
-        game.secondPlayer = secondPlayer;
+        game.setPlayers(firstPlayer, secondPlayer);
     }
 
     controller.switchPage = function(fromPageContainer, toPageContainer) {
-        console.log("switchPage:\n");
-        console.log("from page container: " + fromPageContainer + ", to page container: " + toPageContainer + "\n");
         if(fromPageContainer == null) {
             //request comming from controller.start
             toPageContainer.classList.remove("hide");
             return;
         }
-
         //TODO: hide the from page, and show the toPage
         fromPageContainer.classList.add("hide");
         toPageContainer.classList.remove("hide");
     }
 
+    controller.switchAndReplacePage = function(pageType, context) {
+        if(pageType == TYPE_GAME_OVER_PAGE) {
+            delete pages.gaveOverPage;
+
+            const gameOverPageId = generateNewId(TYPE_GAME_OVER_PAGE);
+
+            //create the new page
+            const gameOverPage = GameOverPage({
+                container: document.querySelector(".game-over-box"),
+                gameOverText: document.querySelector(".game-over-box h1"),
+                playAgainButton: document.querySelector(".play-again-button"),
+                newGameButton: document.querySelector(".back-to-home-button")
+            }, gameOverPageId, context);
+
+            pages.gameOverPage = {pageId: gameOverPageId, page: gameOverPage};
+            controller.switchPage(pages.gamePage.page.container, gameOverPage.container);
+        }
+    }
+
+    controller.updateGameBoard = function(position) {
+        game.updateBoard(position);
+        if(game.getStatus() != STATUS_UNDECIDED) {
+            controller.switchAndReplacePage(TYPE_GAME_OVER_PAGE, {ctrlRequestHandlerInstance: controller.requestHandler, 
+                status: game.getStatus(), 
+                firstPlayer: game.getPlayers().firstPlayer, secondPlayer: game.getPlayers().secondPlayer})
+        }
+    }
 
 
     const generateNewId = function (pageType) {
@@ -216,7 +291,7 @@ function App() {
     const verifyId = function(pageId) {
         for(const page in pages) {
             if(pages[page].pageId == pageId) {
-                return pageId.substr(0,12);
+                return pageId.substr(0,11);
             }
         }
     }

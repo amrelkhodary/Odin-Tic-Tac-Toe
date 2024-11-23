@@ -315,6 +315,15 @@ body, html {
     border: 2px black solid;
 }
 
+.box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 64px;
+    font-family: "Caveat Brush", cursive;
+}
+
 .body .game-over-box {
     display: flex;
     flex-direction: column;
